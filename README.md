@@ -19,7 +19,7 @@
 - [x] **Day 0** — Repo scaffold, CI, and bilingual roadmap <sub>· 저장소 스캐폴드, CI, 이중 언어 로드맵</sub>
 
 **Level 1 · Text Basics · 텍스트 기초**
-- [ ] **Day 1** — Rule-based tokenization <sub>· 규칙 기반 토큰화</sub>
+- [x] **Day 1** — Rule-based tokenization <sub>· 규칙 기반 토큰화</sub> *(2026-08-24)*
 - [ ] **Day 2** — Text normalization and English stopwords <sub>· 텍스트 정규화와 영어 불용어</sub>
 - [ ] **Day 3** — Word frequencies and Zipf's law <sub>· 단어 빈도와 지프의 법칙</sub>
 - [ ] **Day 4** — N-gram extraction <sub>· N-그램 추출</sub>
