@@ -1,7 +1,8 @@
-"""Day 1 tests — tokenization edge cases, EN/KR mixed text, type contract.
+"""Day 1 tests — tokenization edge cases, mixed English-Korean text, type contract.
 
-Day 1 검증 — 토큰화 엣지케이스, 한영 혼합 텍스트, 타입 계약.
-Runnable via `pytest` (repo root) or `python -m unittest` (this folder).
+Korean strings below are functional test data (Unicode-aware tokenization),
+not documentation. Runnable via `pytest` (repo root) or `python -m unittest`
+(this folder).
 """
 
 import unittest
