@@ -13,10 +13,10 @@
 ## 🗺️ Curriculum Roadmap
 
 **Level 0 · Repo Setup**
-- [x] **Day 0** — Repo scaffold, CI, and curriculum roadmap *(2026-08-24)*
+- [x] **Day 0** — Repo scaffold, CI, and curriculum roadmap
 
 **Level 1 · Text Basics**
-- [x] **Day 1** — Rule-based tokenization *(2026-08-24)*
+- [x] **Day 1** — Rule-based tokenization
 - [ ] **Day 2** — Text normalization and English stopwords
 - [ ] **Day 3** — Word frequencies and Zipf's law
 - [ ] **Day 4** — N-gram extraction
