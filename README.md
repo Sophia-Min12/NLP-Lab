@@ -18,7 +18,7 @@
 **Level 1 · Text Basics**
 - [x] **Day 1** — Rule-based tokenization
 - [x] **Day 2** — Text normalization and English stopwords
-- [ ] **Day 3** — Word frequencies and Zipf's law
+- [x] **Day 3** — Word frequencies and Zipf's law
 - [ ] **Day 4** — N-gram extraction
 
 **Level 2 · Text as Vectors**
