@@ -25,7 +25,7 @@
 - [x] **Day 5** — Bag-of-words and vocabulary building
 - [x] **Day 6** — TF-IDF from scratch
 - [x] **Day 7** — Cosine similarity and document ranking
-- [ ] **Day 8** — Inverted index mini search engine
+- [x] **Day 8** — Inverted index mini search engine
 
 **Level 3 · Statistical Language Models**
 - [ ] **Day 9** — Naive Bayes text classifier
