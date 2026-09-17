@@ -24,7 +24,7 @@
 **Level 2 · Text as Vectors**
 - [x] **Day 5** — Bag-of-words and vocabulary building
 - [x] **Day 6** — TF-IDF from scratch
-- [ ] **Day 7** — Cosine similarity and document ranking
+- [x] **Day 7** — Cosine similarity and document ranking
 - [ ] **Day 8** — Inverted index mini search engine
 
 **Level 3 · Statistical Language Models**
