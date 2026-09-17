@@ -22,7 +22,7 @@
 - [x] **Day 4** — N-gram extraction
 
 **Level 2 · Text as Vectors**
-- [ ] **Day 5** — Bag-of-words and vocabulary building
+- [x] **Day 5** — Bag-of-words and vocabulary building
 - [ ] **Day 6** — TF-IDF from scratch
 - [ ] **Day 7** — Cosine similarity and document ranking
 - [ ] **Day 8** — Inverted index mini search engine
