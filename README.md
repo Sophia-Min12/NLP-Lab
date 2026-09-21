@@ -34,7 +34,7 @@
 - [x] **Day 12** — Byte-Pair Encoding tokenizer (the algorithm family GPT tokenizers use)
 
 **Level 4 · Embeddings and Semantic Search**
-- [ ] **Day 13** — Co-occurrence matrix and PPMI
+- [x] **Day 13** — Co-occurrence matrix and PPMI
 - [ ] **Day 14** — SVD word embeddings
 - [ ] **Day 15** — Nearest neighbors and word analogies
 - [ ] **Day 16** — Capstone I: hybrid ranking scorer
