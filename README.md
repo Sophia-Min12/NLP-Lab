@@ -36,7 +36,7 @@
 **Level 4 · Embeddings and Semantic Search**
 - [x] **Day 13** — Co-occurrence matrix and PPMI
 - [x] **Day 14** — SVD word embeddings
-- [ ] **Day 15** — Nearest neighbors and word analogies
+- [x] **Day 15** — Nearest neighbors and word analogies
 - [ ] **Day 16** — Capstone I: hybrid ranking scorer
 - [ ] **Day 17** — Capstone II: bilingual demo, CLI, and honest writeup
 
