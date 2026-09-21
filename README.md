@@ -37,7 +37,7 @@
 - [x] **Day 13** — Co-occurrence matrix and PPMI
 - [x] **Day 14** — SVD word embeddings
 - [x] **Day 15** — Nearest neighbors and word analogies
-- [ ] **Day 16** — Capstone I: hybrid ranking scorer
+- [x] **Day 16** — Capstone I: hybrid ranking scorer
 - [ ] **Day 17** — Capstone II: bilingual demo, CLI, and honest writeup
 
 ---
