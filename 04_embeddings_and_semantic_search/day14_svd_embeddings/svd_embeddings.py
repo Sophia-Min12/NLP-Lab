@@ -149,7 +149,7 @@ def truncated_svd(matrix: np.ndarray, k: int) -> tuple[np.ndarray, np.ndarray, n
     return u[:, :k], s[:k], vt[:k, :]
 
 
-def svd_embeddings(matrix: np.ndarray, k: int = 8, weighting: str = "sqrt") -> np.ndarray:
+def svd_embeddings(matrix: np.ndarray, k: int = 24, weighting: str = "sqrt") -> np.ndarray:
     """One dense ``k``-dimensional vector per row of ``matrix``.
 
     ``weighting`` decides how much the singular values scale the axes:
@@ -330,7 +330,8 @@ if __name__ == "__main__":
               f"{reconstruction_error(ppmi, k):>16.3f}")
     print(f"  the full matrix has {len(ratios)} directions; the tail is mostly noise")
 
-    vectors = svd_embeddings(ppmi, k=8)
+    # k=24, about a quarter of the vocabulary - see the last section.
+    vectors = svd_embeddings(ppmi, k=24)
     print(f"\ncompressed: {ppmi.shape[1]} sparse dimensions -> {vectors.shape[1]} dense ones")
     print(f"  'cat' as a vector: {np.round(vectors[vocabulary['cat']], 3)}")
 
@@ -342,22 +343,31 @@ if __name__ == "__main__":
 
     print("\nwhy compress at all - sparse rows miss what dense ones catch:")
     sparse_similarity = cosine_similarity_matrix(ppmi)
-    print(f"  {'pair':<18}{'sparse PPMI':>13}{'SVD k=8':>10}")
+    print(f"  {'pair':<18}{'sparse PPMI':>13}{'SVD k=24':>11}")
     for a, b in (("cat", "dog"), ("king", "queen"), ("garden", "forest")):
         print(f"  {a + ' / ' + b:<18}{sparse_similarity[vocabulary[a], vocabulary[b]]:>13.3f}"
-              f"{similarity[vocabulary[a], vocabulary[b]]:>10.3f}")
+              f"{similarity[vocabulary[a], vocabulary[b]]:>11.3f}")
 
     print("\nthe weighting changes what 'similar' means:")
     for weighting in ("sqrt", "full", "none"):
-        trial = cosine_similarity_matrix(svd_embeddings(ppmi, k=8, weighting=weighting))
+        trial = cosine_similarity_matrix(svd_embeddings(ppmi, k=24, weighting=weighting))
         print(f"  {weighting:<6} cat/dog {trial[vocabulary['cat'], vocabulary['dog']]:+.3f}"
               f"   cat/the {trial[vocabulary['cat'], vocabulary['the']]:+.3f}")
 
     print("\nchoosing k, honestly:")
-    for k in (2, 4, 8, 16, 32):
+    print(f"  {'k':>4}{'cat/dog':>10}{'cat/bread':>12}{'gap':>9}{'recon err':>12}")
+    best_k, best_gap = 0, -2.0
+    for k in (2, 4, 8, 16, 24, 32, 48, 64, 80, len(vocabulary)):
         trial = cosine_similarity_matrix(svd_embeddings(ppmi, k=k))
         same = trial[vocabulary["cat"], vocabulary["dog"]]
         across = trial[vocabulary["cat"], vocabulary["bread"]]
-        print(f"  k={k:<3} cat/dog {same:+.3f}   cat/bread {across:+.3f}   gap {same - across:+.3f}")
-    print("  too few dimensions and everything collapses together; too many and the")
-    print("  noise directions come back. With 49 words there is not much room to move.")
+        gap = same - across
+        if gap > best_gap:
+            best_k, best_gap = k, gap
+        print(f"  {k:>4}{same:>+10.3f}{across:>+12.3f}{gap:>+9.3f}"
+              f"{reconstruction_error(ppmi, k):>12.3f}")
+    print(f"  the separation peaks at k={best_k} ({best_gap:+.3f}) and collapses after.")
+    print("  too few dimensions and every word shares one direction; too many and the")
+    print("  noise directions come back, drowning the structure in per-word detail.")
+    print("  reconstruction error falls the whole way - fitting the matrix better and")
+    print("  representing the words better are different goals, and they diverge here.")
