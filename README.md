@@ -30,7 +30,7 @@
 **Level 3 · Statistical Language Models**
 - [x] **Day 9** — Naive Bayes text classifier
 - [x] **Day 10** — N-gram language model with Laplace smoothing
-- [ ] **Day 11** — Text generation and perplexity
+- [x] **Day 11** — Text generation and perplexity
 - [ ] **Day 12** — Byte-Pair Encoding tokenizer (the algorithm family GPT tokenizers use)
 
 **Level 4 · Embeddings and Semantic Search**
