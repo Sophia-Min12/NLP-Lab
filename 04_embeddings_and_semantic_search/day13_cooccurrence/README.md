@@ -21,16 +21,16 @@ NumPy arrives here, as Level 4 allows. Everything below is still a count and a l
 
 `build_corpus()` is synthetic. Its distributional structure is **built in, not discovered** — animals share contexts with animals and people with people because the templates say so.
 
-What follows therefore demonstrates that these methods *find structure that exists*. It is not evidence that comparable structure would emerge from a comparable amount of real text. It would not: real corpora for this work are measured in millions of tokens, and this one is about 1,100. Day 15 is where that distinction becomes sharp enough to change a conclusion, and it is stated again there.
+What follows therefore demonstrates that these methods *find structure that exists*. It is not evidence that comparable structure would emerge from a comparable amount of real text. It would not: real corpora for this work are measured in millions of tokens, and this one is about 1,500. Day 15 is where that distinction becomes sharp enough to change a conclusion, and it is stated again there.
 
 ## Why raw counts fail, and why PMI is not just IDF again
 
 Raw co-occurrence counts are dominated by whatever is common:
 
 ```
-cat     the(32), through(12), near(6), saw(6)
-king    the(24), ate(4), bought(4), bread(4)
-ate     the(80), bread(10), fish(10), rice(10)
+cat     the(31), through(12), near(6), saw(6)
+king    the(28), ate(4), saw(4), to(4)
+ate     the(70), bread(10), soup(10), rice(8)
 ```
 
 `the` wins every row, which tells us nothing. Day 6 met this and answered with IDF — down-weight by how many documents a term appears in. **PMI asks a sharper question**: does this pair co-occur *more than chance would predict*?
@@ -42,9 +42,9 @@ PMI(x, y) = log( P(x, y) / (P(x) · P(y)) )
 The denominator is what independence predicts. A word that sits next to everything has exactly the co-occurrences independence already accounts for, so its PMI collapses toward zero — not because it was down-weighted, but because **there was never any surprise in it**.
 
 ```
-cat     near(1.20), ran(1.20), saw(1.20), wandered(1.20)
-king    bought(1.20), saw(1.20), to(1.20), bread(0.88)
-ate     fish(1.89), rice(1.89), soup(1.89), boy(0.69)
+cat     slept(2.77), on(2.08), near(1.38), ran(1.38)
+king    ruled(2.46), saw(1.36), to(1.36), ate(0.99)
+ate     soup(2.03), rice(1.95), fish(1.89), bread(1.07)
 ```
 
 `the` disappears from every list, and a test pins that it dominates the raw-count lists and appears in none of the PPMI ones.
@@ -57,29 +57,29 @@ Averaging only over the words it actually co-occurs with gives the real picture:
 
 ```
 word     raw total  partners  max PPMI  mean PPMI*
-the           1000        36      0.93        0.52
-ate            160        15      1.89        0.81
-cat             72         8      1.20        0.89
-king            48         7      1.20        0.93
-fish            36         6      2.59        1.57
+the           1129        59      1.04        0.47
+ate            140        15      2.03        1.08
+cat             75        10      2.77        1.42
+king            51         8      2.46        1.16
+fish            36         8      3.50        1.71
 ```
 
-A clean inversion. `the` leads on raw count by **14×** and comes **last** on association strength. It has the most partners and the weakest tie to any of them — which is what being a function word *is*. `fish` is rare and occurs in few contexts, so it scores highest.
+A clean inversion. `the` leads on raw count by **15×** and comes **last** on association strength. It has the most partners and the weakest tie to any of them — which is what being a function word *is*. `fish` is rare and occurs in few contexts, so it scores highest.
 
 Day 2's hand-written stopword list and Day 6's IDF both fall out of counting, with nothing told to the algorithm.
 
 ## Why *positive* PMI
 
-Negative PMI claims two words co-occur *less* than chance. In any realistic corpus that estimate is dominated by sampling noise: most pairs simply never co-occur, and "never" is not evidence of repulsion — it is usually evidence of a small corpus. Clipping also keeps the matrix non-negative and very sparse (**86% zeros** here), which is what Day 14's factorization wants.
+Negative PMI claims two words co-occur *less* than chance. In any realistic corpus that estimate is dominated by sampling noise: most pairs simply never co-occur, and "never" is not evidence of repulsion — it is usually evidence of a small corpus. Clipping also keeps the matrix non-negative and very sparse (**94% zeros** here), which is what Day 14's factorization wants.
 
 Pairs that never co-occur would give `log 0`. They are set to zero *before* clipping, so `positive=False` stays finite too; a test checks every entry is finite under both settings.
 
 ## The window is the model
 
 ```
-window=1: cat ~ near, ran, wandered, ate
-window=2: cat ~ near, ran, saw, wandered
-window=5: cat ~ quickly, ran, wandered, river
+window=1: cat ~ slept, near, ran, wandered
+window=2: cat ~ slept, on, near, ran
+window=5: cat ~ windowsill, slept, warm, on
 ```
 
 Narrow windows capture what can grammatically sit beside a word; wide ones blur toward topic. Neither is more correct — they answer different questions, and the answer propagates directly into what Day 14's embeddings consider "similar".
@@ -90,14 +90,14 @@ Counting stays **inside a sentence**, for the same reason Day 10 padded sentence
 
 ```
 cat and dog co-occur 0 times
-  cat    vs dog   : 8 shared context words
-  king   vs queen : 7 shared context words
-  cat    vs king  : 4 shared context words
+  cat    vs dog   : 7 shared context words
+  king   vs queen : 8 shared context words
+  cat    vs king  : 3 shared context words
 ```
 
-`cat` and `dog` **never** appear together. Under every representation so far — bag of words, TF-IDF, cosine, the inverted index — their similarity was necessarily zero. Here they share eight context words, and same-category pairs share more than cross-category ones. A test asserts that ordering.
+`cat` and `dog` **never** appear together. Under every representation so far — bag of words, TF-IDF, cosine, the inverted index — their similarity was necessarily zero. Here they share seven context words, and same-category pairs share more than cross-category ones. A test asserts that ordering.
 
-That overlap is the signal. It is still 49 dimensions of mostly zeros, though, and comparing sparse rows directly is fragile: two words can be similar and share no *exact* context. **Day 14** compresses these rows into short dense vectors where that fragility goes away.
+That overlap is the signal. It is still 100 dimensions of mostly zeros, though, and comparing sparse rows directly is fragile: two words can be similar and share no *exact* context. **Day 14** compresses these rows into short dense vectors where that fragility goes away.
 
 ## Korean
 
@@ -125,4 +125,4 @@ python -m doctest cooccurrence.py
 
 ## Where this leads
 
-A PPMI row *is* a word vector — 49 dimensions, 86% of them zero. **Day 14** factorizes the matrix with SVD to get a short dense vector per word, which is both more robust and small enough to compare quickly. **Day 15** then asks what those vectors actually know.
+A PPMI row *is* a word vector — 100 dimensions, 94% of them zero. **Day 14** factorizes the matrix with SVD to get a short dense vector per word, which is both more robust and small enough to compare quickly. **Day 15** then asks what those vectors actually know.

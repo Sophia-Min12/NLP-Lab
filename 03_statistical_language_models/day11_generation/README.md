@@ -25,10 +25,10 @@ An unsmoothed model on unseen text returns `inf`. That is the correct answer, no
 ## What generation actually shows
 
 ```
-n=1: for ate the
-n=2: the bread for girl queen bought bread at dinner
-n=3: the boy saw boy quickly girl at old <unk> man ate bread king woman
-n=5: the boy saw boy quickly girl at old <unk> man ate bird king woman
+n=1: forest ate the
+n=2: the bread fresh bought bread at caught salty
+n=3: the boy saw bought on great ate near and in behind bought hot village
+n=5: the boy saw bought on great ate near and in behind bought hot village
 ```
 
 `n=1` has no context at all. `n=2` is locally fluent and globally aimless — each adjacent pair is plausible, the sentence is not. And then `n=5` is **no better than `n=3`**, which is not what the usual story predicts.
@@ -36,7 +36,7 @@ n=5: the boy saw boy quickly girl at old <unk> man ate bird king woman
 The cause is smoothing, not the order:
 
 ```
-alpha=0.1   the boy saw boy quickly girl at old <unk> man ate bird king woman
+alpha=0.1   the boy saw bought on great ate near and in behind bought hot village
             -> not in the training data
 alpha=0.0   the boy saw the dog near the river
             -> verbatim training sentence
@@ -58,17 +58,17 @@ the forest
 
 The likeliest continuation of the likeliest first word turns out to be `</s>`. Locally optimal, globally short — which is exactly why real systems use beam search rather than greedy decoding.
 
-**Top-k** refuses the smoothed tail. Day 10 measured one context giving 57.5% of its mass to continuations never observed; sampling from the full distribution keeps drawing from that. `k=1` is provably identical to greedy, and a test asserts it.
+**Top-k** refuses the smoothed tail. Day 10 measured one context giving 75.4% of its mass to continuations never observed; sampling from the full distribution keeps drawing from that. `k=1` is provably identical to greedy, and a test asserts it.
 
 ## Perplexity, and the gap it exposes
 
 ```
  n       train    held-out    ratio
- 1        24.5        24.6     1.00
- 2         3.6         3.9     1.08
- 3         2.9         3.3     1.13
- 4         3.1         3.9     1.28
- 5         3.5         5.7     1.66
+ 1        35.7        37.8     1.06
+ 2         4.7         5.2     1.10
+ 3         4.0         5.1     1.25
+ 4         4.4         6.3     1.46
+ 5         4.9         9.4     1.91
 ```
 
 Held-out perplexity **falls then rises**, bottoming out at n=3. More context is not always better: past some order the model has too little data per context to estimate anything, and smoothing does the rest.
@@ -78,13 +78,13 @@ The right-hand column is the important one. The ratio climbs monotonically and n
 Smoothing shows the same shape:
 
 ```
-alpha=1.0     7.2
-alpha=0.1     3.9
-alpha=0.01    3.5
+alpha=1.0    13.1
+alpha=0.1     5.2
+alpha=0.01    3.9
 alpha=0.0     inf   <- one unseen word makes it infinite
 ```
 
-Add-one is nearly twice as perplexed as add-0.01 — Day 10's "what Laplace costs" table, now as a single number. And `alpha=0` is infinite, from **one** out-of-vocabulary word in twenty sentences.
+Add-one is over three times as perplexed as add-0.01 — Day 10's "what Laplace costs" table, now as a single number. And `alpha=0` is infinite, from **one** out-of-vocabulary word in twenty sentences.
 
 ## Perplexity is not quality
 

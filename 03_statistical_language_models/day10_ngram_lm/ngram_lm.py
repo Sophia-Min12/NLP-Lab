@@ -266,21 +266,51 @@ def build_corpus() -> list[list[str]]:
     motions = ["ran", "walked", "wandered"]
 
     sentences = []
-    for person, pronoun in people:
-        for place in places:
+    # Rotated slices, so words of one category are not perfectly
+    # interchangeable. With every template applied to every word, same-category
+    # rows come out bit-identical and every similarity below is exactly 1.0.
+    for i, (person, pronoun) in enumerate(people):
+        for place in places[i % 2:] + places[:i % 2]:
             sentences.append(f"the {person} walked to the {place} with {pronoun} friend")
+        for place in places[:2 + i % 3]:
             sentences.append(f"the {person} bought bread at the {place}")
-        for food in foods:
+        for food in foods[i % 4:] + foods[:i % 4]:
             sentences.append(f"the {person} ate the {food} for {pronoun} dinner")
-    for animal in animals:
-        for place in places:
-            for motion in motions:
+    for i, animal in enumerate(animals):
+        for place in places[i % 3:] + places[:i % 3]:
+            for motion in motions[i % 2:] + motions[:i % 2]:
                 sentences.append(f"the {animal} {motion} through the {place}")
-        for food in foods:
+        for food in foods[:2 + i % 3]:
             sentences.append(f"the {animal} ate the {food} quickly")
     for person, _ in people:
         for animal in animals:
             sentences.append(f"the {person} saw the {animal} near the river")
+
+    # One context of its own per word, repeated so it survives min_count=2.
+    # The his/her pairs are deliberate: they are the only systematic
+    # difference between king/queen and between man/woman, which is what
+    # Day 15's analogy arithmetic has to work with.
+    for sentence in (
+        "the cat slept on the warm windowsill",
+        "the dog barked at the passing cart",
+        "the bird sang in the tall tree",
+        "the fox hid behind the stone wall",
+        "the king ruled the kingdom from his throne",
+        "the queen ruled the kingdom from her throne",
+        "the man carried his heavy sack",
+        "the woman carried her heavy sack",
+        "the boy played with his wooden toy",
+        "the girl played with her wooden toy",
+        "the garden was full of bright flowers",
+        "the forest was dark and very deep",
+        "the village had a small stone church",
+        "the market was loud on market day",
+        "the bread was fresh from the oven",
+        "the soup was hot and rather salty",
+        "the rice was cooked with great care",
+        "the fish was caught that same morning",
+    ):
+        sentences.extend([sentence] * 3)
 
     # A deliberate hapax tail. Real corpora are mostly rare words (Day 3
     # measured ~60% of types occurring once); a purely templated corpus has
@@ -359,9 +389,10 @@ if __name__ == "__main__":
         zeros = sum(1 for s in test if mle.log_probability(s) == float("-inf"))
         kept = sum(1 for s in test if smoothed.log_probability(s) == float("-inf"))
         print(f"  {n:>2}{zeros:>13}/{len(test)}{kept:>9}/{len(test)}")
-    print("  n=2 and n=3: the single zero is an out-of-vocabulary *word*")
-    print("  n=4 and n=5: known words in sequences never seen - Day 4's sparsity curve,")
-    print("               arriving as impossibility rather than as a percentage")
+    print("  at n=2 the single zero is an out-of-vocabulary *word* - the held-out")
+    print("  sentence uses one the training split never contained. From n=3 up the")
+    print("  extra zeros are known words in sequences never seen: Day 4's sparsity")
+    print("  curve, arriving as impossibility rather than as a percentage.")
 
     print("\nwhat Laplace costs - probability mass moved off the observed data:")
     print(f"  {'context':<14}{'seen':>6}{'count':>7}{'observed':>11}{'unseen':>9}")

@@ -4,7 +4,7 @@
 
 ## The corpus
 
-Levels 1–2 counted real text. This day needs *enough* text to estimate conditional probabilities, and Level 3 is standard-library only — there is nothing here to download with. So `build_corpus()` generates ~1100 tokens from templates.
+Levels 1–2 counted real text. This day needs *enough* text to estimate conditional probabilities, and Level 3 is standard-library only — there is nothing here to download with. So `build_corpus()` generates ~1,400 tokens from templates.
 
 That has a consequence worth stating before any number below is read: **the distributional structure is built in, not discovered.** Animals share contexts with animals, people with people, and the possessive tracks the person. This is useful for showing what these methods do when the structure exists, and it is *not* evidence they would find it in real text. Days 13–15 depend on this corpus and the point matters more there; it is flagged again wherever it does.
 
@@ -35,15 +35,15 @@ Maximum likelihood assigns probability 0 to any continuation it never saw, and o
 ```
  n               MLE     Laplace
  2            1/20        0/20
- 3            1/20        0/20
- 4            8/20        0/20
- 5           18/20        0/20
+ 3            4/20        0/20
+ 4            9/20        0/20
+ 5           15/20        0/20
 ```
 
 The two ends of that table fail for **different reasons**, and the distinction is the real content:
 
-- At **n=2 and n=3**, the single failure is an out-of-vocabulary *word* — one held-out sentence uses a word the training split never contained.
-- At **n=4 and n=5**, every word is known; the sequences are not. This is Day 4's sparsity curve arriving as impossibility instead of as a percentage.
+- At **n=2** the single failure is an out-of-vocabulary *word* — one held-out sentence uses a word the training split never contained.
+- From **n=3 up**, the extra failures are known words in sequences never seen. This is Day 4's sparsity curve arriving as impossibility instead of as a percentage.
 
 A test pins both causes separately, using a two-sentence corpus where `the zebra` fails on the word and `the cat ran` fails on the sequence while every word is familiar.
 
@@ -55,20 +55,20 @@ Smoothing removes every zero — the right-hand column above is all zeros. The q
 
 ```
 context         seen  count   observed   unseen
-the               21    317     91.8%     8.2%
-king               4     13     26.6%    73.4%
-ate                1     36     42.5%    57.5%
-wandered           1     16     25.4%    74.6%
+the               27    374     84.2%    15.8%
+king               5     15     17.1%    82.9%
+ate                1     32     24.6%    75.4%
+wandered           1     15     13.7%    86.3%
 ```
 
-Read the `ate` row carefully. That context was observed **36 times** and always with the same continuation. Add-one still hands **57.5% of its probability mass** to continuations that were never seen — more than it leaves on the evidence it actually has. The model is now mostly describing things that did not happen.
+Read the `ate` row carefully. That context was observed **32 times** and always with the same continuation. Add-one still hands **75.4% of its probability mass** to continuations that were never seen — three times what it leaves on the evidence it actually has. The model is now mostly describing things that did not happen.
 
 The reason is structural: add-one adds `alpha × |V|` to every denominator, so the damage scales with vocabulary size and hits *narrow, well-attested* contexts hardest. Exactly the contexts a language model should be most confident about.
 
 ```
-alpha=1.0    observed  42.5%   unseen  57.5%
-alpha=0.1    observed  87.8%   unseen  12.2%
-alpha=0.01   observed  98.6%   unseen   1.4%
+alpha=1.0    observed  24.6%   unseen  75.4%
+alpha=0.1    observed  76.1%   unseen  23.9%
+alpha=0.01   observed  96.9%   unseen   3.1%
 ```
 
 Add-k with a small k is the usual retreat, and it is a retreat rather than a solution — it just tunes how much is stolen. The real answers redistribute mass according to how often *unseen things happen*, estimated from the hapax rate: **Good-Turing**, and **Kneser-Ney**, which additionally asks how many distinct contexts a word appears in rather than how often. Neither is implemented here; knowing that add-one is a placeholder is the point.
@@ -80,7 +80,7 @@ Add-k with a small k is the usual retreat, and it is a retreat rather than a sol
 ```
 the wizard ate the bread
 -> the <unk> ate the bread
-log P = -17.08   (finite, so it is scoreable)
+log P = -19.10   (finite, so it is scoreable)
 ```
 
 This is the Day 3 hapax tail put to work rather than discarded — and it only works because the corpus has one.
