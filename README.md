@@ -28,7 +28,7 @@
 - [x] **Day 8** — Inverted index mini search engine
 
 **Level 3 · Statistical Language Models**
-- [ ] **Day 9** — Naive Bayes text classifier
+- [x] **Day 9** — Naive Bayes text classifier
 - [ ] **Day 10** — N-gram language model with Laplace smoothing
 - [ ] **Day 11** — Text generation and perplexity
 - [ ] **Day 12** — Byte-Pair Encoding tokenizer (the algorithm family GPT tokenizers use)
