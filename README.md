@@ -10,6 +10,33 @@
 
 ---
 
+## ✅ Finished — start here
+
+All 17 days are complete. The end of the road is a bilingual search CLI built entirely from the primitives:
+
+```bash
+cd 04_embeddings_and_semantic_search/day17_capstone
+python capstone.py evaluate          # recall@3 for four tokenization strategies
+python capstone.py compare 문서       # one query through all of them
+python capstone.py search 고양이 -e   # search, showing which terms matched
+```
+
+```
+  analyzer          overall   Korean  English   terms
+  word                 33%      11%     100%      61
+  subword             100%     100%     100%      85
+  char2               100%     100%     100%     199
+```
+
+**Word-level retrieval gets 100% on English and 11% on Korean.** That gap is the thread running through the whole curriculum, and closing it is what Day 12's subword tokenizer is for.
+
+Two documents are worth reading before the code:
+
+- **[Day 17 — the honest account](04_embeddings_and_semantic_search/day17_capstone/README.md)** — what works, what works but should not be believed, what does not work, and the five mistakes that taught more than the successes.
+- **[Day 12 — Byte-Pair Encoding](03_statistical_language_models/day12_bpe/README.md)** — the fix every earlier day points at.
+
+---
+
 ## 🗺️ Curriculum Roadmap
 
 **Level 0 · Repo Setup**
@@ -38,7 +65,7 @@
 - [x] **Day 14** — SVD word embeddings
 - [x] **Day 15** — Nearest neighbors and word analogies
 - [x] **Day 16** — Capstone I: hybrid ranking scorer
-- [ ] **Day 17** — Capstone II: bilingual demo, CLI, and honest writeup
+- [x] **Day 17** — Capstone II: bilingual demo, CLI, and honest writeup
 
 ---
 
